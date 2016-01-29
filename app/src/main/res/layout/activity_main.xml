@@ -1,22 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_frame"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/coordinator"
         tools:context=".MainActivity">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="112dp"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/app_bar_layout"
@@ -27,7 +26,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/colorPrimary"/>
+                app:layout_scrollFlags="scroll|enterAlways"/>
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tab_layout"
@@ -35,19 +34,21 @@
                 android:layout_height="?attr/actionBarSize"
                 app:tabIndicatorColor="@android:color/background_light"
                 app:tabSelectedTextColor="@android:color/background_light"
-                app:tabTextColor="@android:color/background_light"/>
-
+                app:tabTextColor="@android:color/background_light"
+                app:layout_scrollFlags="scroll|enterAlways"/>
 
         </android.support.design.widget.AppBarLayout>
 
         <android.support.design.widget.FloatingActionButton
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
             android:id="@+id/fab"
             app:layout_anchor="@id/pager"
-            android:src="@drawable/ic_add_white_24dp"
             app:layout_anchorGravity="bottom|right|end"
+            android:src="@drawable/ic_add_white_24dp"
             android:layout_margin="@dimen/fab_margin"/>
 
+
     </android.support.design.widget.CoordinatorLayout>
+
 </FrameLayout>
