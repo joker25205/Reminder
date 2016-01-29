@@ -12,7 +12,11 @@ import android.view.ViewGroup;
 
 import com.example.joker.reminder.R;
 import com.example.joker.reminder.adapter.DoneTasksAdapter;
+import com.example.joker.reminder.database.DBHelper;
 import com.example.joker.reminder.model.ModelTask;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -60,6 +64,19 @@ public class DoneTaskFragment extends TaskFragment {
 
         // Inflate the layout for this fragment
         return rootView;
+    }
+
+
+    @Override
+    public void addTaskFromDB() {
+
+        List<ModelTask> tasks = new ArrayList<>();
+        tasks.addAll(activity.dbHelper.query().getTasks(DBHelper.SELECTION_STATUS,
+               new String[]{Integer.toString(ModelTask.STATUS_DONE)}, DBHelper.TASK_DATE_COLUMN));
+
+        for (int i = 0; i < tasks.size(); i++){
+            addTask(tasks.get(i), false);
+        }
     }
 
 
