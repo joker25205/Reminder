@@ -1,6 +1,7 @@
 package com.example.joker.reminder.fragment;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -11,6 +12,8 @@ import android.view.View;
 import com.example.joker.reminder.MainActivity;
 import com.example.joker.reminder.R;
 import com.example.joker.reminder.adapter.TaskAdapter;
+import com.example.joker.reminder.alarm.AlarmHelper;
+import com.example.joker.reminder.dialog.EditTaskDialogFragment;
 import com.example.joker.reminder.model.Item;
 import com.example.joker.reminder.model.ModelTask;
 
@@ -23,6 +26,8 @@ public abstract class TaskFragment extends Fragment {
 
     public MainActivity activity;
 
+    public AlarmHelper alarmHelper;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -31,31 +36,15 @@ public abstract class TaskFragment extends Fragment {
             activity = (MainActivity) getActivity();
         }
 
+        alarmHelper = AlarmHelper.getInstance();
+
         addTaskFromDB();
     }
 
-    public void addTask(ModelTask newTask, boolean saveToDB) {
-        int position = -1;
+    public abstract void addTask(ModelTask newTask, boolean saveToDB);
 
-        for (int i = 0; i < adapter.getItemCount(); i++) {
-            if (adapter.getItem(i).isTask()) {
-                ModelTask task = (ModelTask) adapter.getItem(i);
-                if (newTask.getDate() < task.getDate()) {
-                    position = i;
-                    break;
-                }
-            }
-        }
-
-        if (position != -1) {
-            adapter.addItem(position, newTask);
-        } else {
-            adapter.addItem(newTask);
-        }
-
-        if (saveToDB){
-            activity.dbHelper.saveTask(newTask);
-        }
+    public void updateTask(ModelTask task) {
+        adapter.updeteTask(task);
     }
 
     public void removeTaskDialog(final int location){
@@ -99,7 +88,9 @@ public abstract class TaskFragment extends Fragment {
                         @Override
                         public void onViewDetachedFromWindow(View v) {
                             if (isRemoved[0]){
+                                alarmHelper.removeAlarm(timeStamp);
                                 activity.dbHelper.removeTask(timeStamp);
+
                             }
                         }
                     });
@@ -121,6 +112,11 @@ public abstract class TaskFragment extends Fragment {
         }
 
         dialogBuilder.show();
+    }
+
+    public void showTaskEditDialog(ModelTask task){
+        DialogFragment editingTaskDialog = EditTaskDialogFragment.newInstance(task);
+        editingTaskDialog.show(getActivity().getFragmentManager(), "EditTaskDialogFragment");
     }
 
     public abstract void findTasks(String title);

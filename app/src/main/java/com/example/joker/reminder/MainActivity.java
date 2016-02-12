@@ -15,8 +15,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.joker.reminder.adapter.TabAdapter;
+import com.example.joker.reminder.alarm.AlarmHelper;
 import com.example.joker.reminder.database.DBHelper;
 import com.example.joker.reminder.dialog.AddingTaskDialogFragment;
+import com.example.joker.reminder.dialog.EditTaskDialogFragment;
 import com.example.joker.reminder.fragment.CurrentTaskFragment;
 import com.example.joker.reminder.fragment.DoneTaskFragment;
 import com.example.joker.reminder.fragment.SplashFragment;
@@ -25,7 +27,7 @@ import com.example.joker.reminder.model.ModelTask;
 
 public class MainActivity extends AppCompatActivity
         implements AddingTaskDialogFragment.AddingTaskListener,
-        CurrentTaskFragment.OnTaskDoneListener, DoneTaskFragment.OnTaskRestoreListener {
+        CurrentTaskFragment.OnTaskDoneListener, DoneTaskFragment.OnTaskRestoreListener, EditTaskDialogFragment.EditingTaskListener {
 
     FragmentManager fragmentManager;
 
@@ -47,6 +49,8 @@ public class MainActivity extends AppCompatActivity
         PreferenceHelper.getInstance().init(getApplicationContext());
         preferenceHelper = PreferenceHelper.getInstance();
 
+        AlarmHelper.getInstance().init(getApplicationContext());
+
         dbHelper = new DBHelper(getApplicationContext());
 
         fragmentManager = getFragmentManager();
@@ -54,6 +58,18 @@ public class MainActivity extends AppCompatActivity
         runSplash();
 
         setUI();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyAplication.activityResumed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyAplication.activityPaused();
     }
 
     @Override
@@ -180,5 +196,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onTaskRestore(ModelTask task) {
         currentTaskFragment.addTask(task, false);
+    }
+
+    @Override
+    public void onTaskEdited(ModelTask updatedTask) {
+        currentTaskFragment.updateTask(updatedTask);
+        dbHelper.update().task(updatedTask);
     }
 }
